@@ -1,0 +1,99 @@
+/* 一键引入：
+<link rel="stylesheet" href="../../css/base.css">
+ */
+
+body {
+    padding: 0;
+    margin: 0;
+}
+
+/**
+    整体结构
+*/
+
+/* 不重复的背景 */
+.noRepeatBG {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/* 尽量使用flex布局 */
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* （左右）flex 为 1，不同的多个被设置flex的div，会按照flex比例分配大小 */
+.flex-1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/**/
+.flex1 {
+    flex: 1;
+}
+
+.flex2 {
+    flex: 2;
+}
+
+/* 需要占据整个 竖 列 */
+.empty-v-all {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* 像登录、注册那样需要一个比较大的div，而且总是透明的 */
+.registerLoginBox {
+    margin-top: 13vh;
+    width: 390px;
+    height: 540px;
+    background-color: rgba(233, 233, 233, 0.75);
+    border-radius: 20px;
+}
+
+/* 内部内容 */
+.innerBox {
+    text-align: center;
+    margin: 20px;
+}
+
+/* 靠左的标题 */
+.title-left {
+    font-size: 40px;
+    margin: 15px;
+    margin-top: 40px;
+    text-align: left;
+}
+
+/* 左下角小子提示，默认不展示 */
+.tips {
+    font-size: 10px;
+    text-align: left;
+    margin-top: 2px;
+    margin-left: 18px;
+    display: none;
+}
+
+
+input {
+    border: none;
+    outline: none;
+    margin-left: 1vw;
+}
+
+.input {
+    width: 305px;
+    height: 50px;
+    background-color: rgb(255, 255, 255);
+    margin-left: 20px;
+    border-radius: 10px;
+    justify-content: flex-start;
+    align-items: center;
+    display: flex;
+}

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movie mark</title>
+    <link rel="stylesheet" href="./css/base.css">
+    <style>
+        .noRepeatBG {
+            background-image: url("./images/RegisterBackground.png")
+        }
+
+        .code {
+            margin: auto;
+            text-align: center;
+            background-color: white;
+            color: rgb(214, 62, 85);
+        }
+
+        span {
+            font-family: 'SimSun';
+            color: rgb(214, 62, 85);
+            font-weight: bold;
+        }
+
+        input[type="submit"] {
+            width: 280px;
+            color: white;
+            background-color: rgb(214, 62, 85);
+        }
+
+        .thirdPlatform {
+            margin-top: 20px;
+            color: rgb(214, 62, 85);
+            font-size: 12px;
+        }
+
+        .tips {
+            color: rgb(214, 62, 85);
+        }
+
+        .InfoTip {
+            height: 65px;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container noRepeatBG">
+    <div class="flex-1">
+    </div>
+    <div class="flex-1">
+        <div class="registerLoginBox" style="margin-left: 10vh;">
+            <div class="innerBox">
+                <div class="title-left"><span style="font-weight: bold; ">注册</span></div>
+                <form name="register" action="" method="">
+                    <div class="InfoTip">
+                        <div class="input">
+                            <input type="text" placeholder="邮箱地址" name="email">
+                        </div>
+                        <div class="tips tipEmail"></div>
+                    </div>
+                    <div class="InfoTip">
+                        <div class="input">
+                            <input style="outline: none;" maxlength='6' ; placeholder="邮箱验证码" name="code">
+                            <span style="color: rgb(214, 62, 85);">|</span>
+                            <!-- <span class="code">获取验证码</span> -->
+                            <input class="code" type="button" value="获取验证码" style="background-color: white">
+                        </div>
+                        <div class="tips tipCode">请输入邮箱验证码</div>
+                    </div>
+                    <div class="InfoTip">
+                        <div class="input"><input type="text" maxlength='12' ; placeholder="用户名" name="name">
+                        </div>
+                        <div class="tips tipName"></div>
+                    </div>
+                    <div class="InfoTip">
+                        <div class="input">
+                            <input type="password" placeholder="密码" name="password">
+                            <img id="pwdShow" style="margin-left: 60px;" src="./images/hide.png" alt=""
+                                 width="20" height="20">
+                        </div>
+                        <div class="tips tipPwd">请输入密码</div>
+                    </div>
+                    <div class="input" style="background-color: rgb(214, 62, 85);text-align: center;">
+                        <input type="submit" value="注册">
+                    </div>
+                </form>
+                <div class="thirdPlatform"><span>第三方登录</span></span></div>
+                <div class="support">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module">
+    import { url, index, bindEventTip, bindEventTipAndRequest } from './js/globals.js';
+    var emailVerification = false;
+    var isRegistered = true;
+    var flag = false; // 默认不显示密码
+
+    // 获取邮箱地址输入框和提示信息的元素
+    var emailInput = document.querySelector('input[name="email"]');
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    function validateEmail(email) {
+        return !emailPattern.test(email);
+    }
+    // 当邮箱地址输入框失去焦点时进行验证
+    var emailTip = document.querySelector('.tipEmail')
+    bindEventTip('blur', 'input[name="email"]', '.tipEmail', "请输入邮箱地址", validateEmail);
+
+    // 用户名
+    var nameInput = document.querySelector('input[name="name"]');
+    bindEventTip('blur', 'input[name="name"]', '.tipName', "请输入用户名", function (name) { return name == "" });
+
+    // 密码
+    var pwdInput = document.querySelector('input[name="password"]');
+    var pwdTip = document.querySelector('.tipPwd');
+    bindEventTip('blur', 'input[name="password"]', '.tipPwd', "请输入密码", function (name) { return name == "" });
+    pwdInput.addEventListener('keyup', function () {
+        if (event.key === "Enter") {
+            submitData()
+        }
+    });
+
+    // 显示密码
+    var pwdShowIcon = document.getElementById("pwdShow");
+    pwdShowIcon.onclick = function () {
+        if (flag) {
+            //判断如果是图2，则换图1;
+            pwdShowIcon.src = "./images/view.png";
+            pwdInput.type = "text";
+            flag = false;
+        } else {
+            pwdShowIcon.src = "./images/hide.png";
+            pwdInput.type = "password";
+            flag = true;
+        }
+    }
+
+    document.register.addEventListener('submit', function (event) {
+        event.preventDefault(); // 阻止表单提交
+        submitData()
+    });
+
+    function submitData() {
+        // 校验用户名长度
+        if (nameInput.value == "") {
+            pwdTip.style.display = 'block';
+            return
+        }
+
+        // 校验密码长度
+        if (pwdInput.value.length == "") {
+            pwdTip.style.display = 'block';
+            return
+        }
+
+        // 提交表单
+        var form = document.forms["register"];
+        var formData = new FormData(form);
+        var json = {
+            "email": formData.get("email"),
+            "pwd": formData.get("pwd"),
+            "name": formData.get("name")
+        };
+        var jsonData = JSON.stringify(json);
+        console.log(jsonData)
+        fetch(url + "/user/register", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: jsonData
+        }).then(data => {
+            if (data.success) {
+                // 重定位到首页
+                window.location.href = index;
+                return
+            }
+            alert("注册失败，请稍后再试")
+        })
+    }
+</script>
+</body>
+
+</html>

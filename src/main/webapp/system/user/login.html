@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movie mark</title>
+    <link rel="stylesheet" href="../../css/base.css">
+    <style>
+        /* .noRepeatBG {
+            
+    background-position: center;
+            background-image: url("../../images/loginBG.jpg")
+        } */
+
+        .noRepeatBG {
+            background-image: url("../../images/loginBackground.jpg")
+        }
+
+        .code {
+            margin: auto;
+            text-align: center;
+            background-color: white;
+            color: rgb(214, 62, 85);
+        }
+
+        span {
+            color: #DB7E0B;
+        }
+
+        input[type="submit"] {
+            width: 280px;
+            color: white;
+            background-color: rgb(214, 62, 85);
+        }
+
+        .thirdPlatform {
+            margin-top: 20px;
+            color: rgb(214, 62, 85);
+            font-size: 12px;
+        }
+
+        .tips {
+            color: rgb(214, 62, 85);
+        }
+
+        .InfoTip {
+            height: 65px;
+        }
+
+        .flex-1 {
+            display: flex;
+            flex-direction: row-reverse;
+        }
+
+        .title {
+            font-weight: bold;
+            font-size: 45px;
+            font-family: 'SimSun';
+        }
+
+        .title-left {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .tipInfo {
+            font-size: small;
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            text-decoration: none;
+            color: #A3756D;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #DB7E0B;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container noRepeatBG">
+        <div class="flex-1">
+            <div class="registerLoginBox">
+                <div class="innerBox">
+                    <div class="title-left">
+                        <div><span class="title">登录</span></div>
+                        <div class="tipInfo">
+                            <div style="flex: 1; color: gray;">暂无账号？</div>
+                            <div style="flex: 1; color: #A3756D"><a href="register.html">注册</a></div>
+                        </div>
+                    </div>
+                    <form name="login" action="" method="">
+                        <div class="InfoTip">
+                            <div class="input">
+                                <input type="text" placeholder="邮箱地址" name="email">
+                            </div>
+                            <div class="tips tipEmail"></div>
+                        </div>
+                        <div class="InfoTip">
+                            <div class="input">
+                                <input type="password" placeholder="密码" name="password">
+                                <img id="pwdShow" style="margin-left: 60px;" src="../../images/hide.png" alt=""
+                                    width="20" height="20">
+                            </div>
+                            <div class="tips tipPwd">请输入密码</div>
+                        </div>
+                        <div class="input" style="background-color: rgb(214, 62, 85);text-align: center;">
+                            <input type="submit" value="注册">
+                        </div>
+                    </form>
+                    <div class="thirdPlatform"><span>第三方登录</span></span></div>
+                    <div class="support">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex-1">
+        </div>
+    </div>
+    <script type="module">
+        import { url, index, bindEventTip, bindEventTipAndRequest } from '../../js/globals.js';
+        var emailVerification = false;
+        var isRegistered = true;
+        var flag = false; // 默认不显示密码
+
+        // 获取邮箱地址输入框和提示信息的元素
+        var emailInput = document.querySelector('input[name="email"]');
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        function validateEmail(email) {
+            return !emailPattern.test(email);
+        }
+        // 当邮箱地址输入框失去焦点时进行验证
+        bindEventTip('blur', 'input[name="email"]', '.tipEmail', "请输入邮箱地址", validateEmail);
+
+
+        // 密码
+        var pwdInput = document.querySelector('input[name="password"]');
+        var pwdTip = document.querySelector('.tipPwd');
+        bindEventTip('blur', 'input[name="password"]', '.tipPwd', "请输入密码", function (name) { return name == "" });
+        pwdInput.addEventListener('keyup', function () {
+            if (event.key === "Enter") {
+                submitData()
+            }
+        });
+
+        // 显示密码
+        var pwdShowIcon = document.getElementById("pwdShow");
+        pwdShowIcon.onclick = function () {
+            if (flag) {
+                //判断如果是图2，则换图1;
+                pwdShowIcon.src = "../../images/view.png";
+                pwdInput.type = "text";
+                flag = false;
+            } else {
+                pwdShowIcon.src = "../../images/hide.png";
+                pwdInput.type = "password";
+                flag = true;
+            }
+        }
+
+        document.login.addEventListener('submit', function (event) {
+            event.preventDefault(); // 阻止表单提交
+            submitData()
+        });
+
+        function submitData() {
+            // 提交表单
+            var form = document.forms["login"];
+            var formData = new FormData(form);
+            var json = {
+                "email": formData.get("email"),
+                "pwd": formData.get("password"),
+            };
+            fetch(url + "/login", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(json)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    if (data.success) {
+                        // 重定位到首页
+                        // window.location.href = "https://www.baidu.com/";
+                        window.location.href = index
+                        return
+                    } else {
+                        alert("登录失败")
+                    }
+                })
+        }
+    </script>
+</body>
+
+</html>
